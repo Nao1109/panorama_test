@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <title>360 Viewer</title>
 
-  <!-- pannellum -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css"/>
   <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
 
@@ -21,23 +20,42 @@
       height: 100vh;
     }
 
-    /* オーバーレイ文字 */
-    .overlay {
+    /* ロゴ */
+    .logo {
       position: absolute;
-      bottom: 20px;
+      top: 20px;
       left: 20px;
-      color: white;
-      background: rgba(0,0,0,0.5);
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-size: 14px;
-      animation: fadeOut 3s ease 3s forwards;
+      width: 120px;
+      cursor: pointer;
+      z-index: 10;
     }
 
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-      }
+    /* モーダル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+    }
+
+    .modal-content {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 閉じるボタン */
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 1000;
     }
   </style>
 </head>
@@ -46,24 +64,52 @@
 
 <div id="panorama"></div>
 
-<!-- ここがUIテキスト -->
-<div class="overlay">
-  ドラッグして見てね
+<!-- ロゴ -->
+<img src="logo.png" class="logo" id="openModal">
+
+<!-- モーダル -->
+<div id="modal" class="modal">
+  <div class="close" id="closeModal">×</div>
+  <div id="modalPanorama" class="modal-content"></div>
 </div>
 
 <script>
+// メイン表示
 window.addEventListener('DOMContentLoaded', function() {
   pannellum.viewer('panorama', {
     type: "equirectangular",
     panorama: "./panorama.jpg",
-    autoLoad: true,
-
-    // ちょいカスタム
-    yaw: 180,
-    pitch: 0,
-    hfov: 100
+    autoLoad: true
   });
 });
+
+// モーダル制御
+const modal = document.getElementById("modal");
+const openBtn = document.getElementById("openModal");
+const closeBtn = document.getElementById("closeModal");
+
+let modalViewer = null;
+
+openBtn.onclick = function() {
+  modal.style.display = "block";
+
+  // モーダル用viewer生成
+  modalViewer = pannellum.viewer('modalPanorama', {
+    type: "equirectangular",
+    panorama: "./panorama.jpg",
+    autoLoad: true
+  });
+};
+
+closeBtn.onclick = function() {
+  modal.style.display = "none";
+
+  // viewer破棄（メモリ対策）
+  if (modalViewer) {
+    modalViewer.destroy();
+    modalViewer = null;
+  }
+};
 </script>
 
 </body>

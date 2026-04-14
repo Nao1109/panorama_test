@@ -21,11 +21,16 @@
 <div id="panorama"></div>
 
 <script>
-window.addEventListener('DOMContentLoaded', function() {
-  pannellum.viewer('panorama', {
-    type: "equirectangular",
-    panorama: "./panorama.jpg",
-    autoLoad: true
-  });
+pannellum.viewer('panorama', {
+  type: "equirectangular",
+  panorama: "./panorama.jpg",
+  autoLoad: true,
+
+  loadingText: "読み込み中...",
+
+  strings: {
+    drag: "ドラッグで見回せます",
+    zoom: "スクロールでズーム",
+    loadError: "読み込み失敗しました"
+  }
 });
-</script>
